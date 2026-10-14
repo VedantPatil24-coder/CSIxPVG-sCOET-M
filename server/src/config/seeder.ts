@@ -41,7 +41,7 @@ export const seedDatabase = async () => {
           order: 1
         },
         {
-          name: 'Dr. S. H. Patil',
+          name: 'Prof. Aakanksha Mishra Tripathi',
           designation: 'Faculty Coordinator',
           category: 'coordinator',
           department: 'Computer Department',
