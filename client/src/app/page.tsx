@@ -181,6 +181,28 @@ const FALLBACK_TEAM: TeamMember[] = [
   }
 ];
 
+const FALLBACK_NEWS: NewsItem[] = [
+  {
+    _id: 'news_001',
+    title: 'CSI Student Chapter Inauguration Ceremony',
+    content: 'We cordially invite you to the official Inauguration Ceremony of the Computer Society of India (CSI) Student Chapter at PVG\'s College of Engineering Technology and Management. Join us to celebrate the launch of our student chapter dedicated to innovation, inspiration, and integration in the field of computing.',
+    imageUrl: '/inauguration_invite.png',
+    createdAt: '2026-08-24T00:00:00.000Z'
+  }
+];
+
+const FALLBACK_EVENTS: EventItem[] = [
+  {
+    _id: 'event_001',
+    title: 'Syntax Sweep',
+    description: 'SYNTAX SWEEP, CSI\'s first event, participants will be given buggy code. Find the errors, fix them, and get your code running — all within given time!',
+    date: '2026-10-16T10:00:00.000Z',
+    location: 'PVG Lab',
+    imageUrl: '/syntax_sweep.png',
+    registrationCount: 0
+  }
+];
+
 export default function Home() {
   const [showIntro, setShowIntro] = useState(true);
 
@@ -547,46 +569,48 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
               </h2>
             </div>
 
-            {news.length === 0 ? (
-              <div className="glass-panel p-12 rounded-2xl border border-white/5 text-center max-w-md mx-auto">
-                <p className="text-gray-300 font-mono uppercase tracking-widest text-sm sm:text-base">
-                  Coming Soon • News Node Offline
-                </p>
-                <p className="text-sm text-gray-400 mt-2">
-                  We are preparing our dynamic news broadcast feed. Stay tuned!
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {news.map((item) => (
-                  <div
-                    key={item._id}
-                    className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col justify-between group hover:border-cyan-500/30 transition-all duration-300"
-                  >
-                    <div>
-                      {item.imageUrl && (
-                        <div className="w-full h-44 rounded-xl overflow-hidden mb-4">
-                          <img
-                            src={`${BACKEND_URL}${item.imageUrl}`}
-                            alt={item.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
+            {(() => {
+              const displayNews = news.length > 0 ? news : FALLBACK_NEWS;
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {displayNews.map((item) => {
+                    // Fallback items use local paths, backend items use full URL
+                    const imgSrc = item.imageUrl
+                      ? item.imageUrl.startsWith('/')
+                        ? item.imageUrl
+                        : `${BACKEND_URL}${item.imageUrl}`
+                      : null;
+                    return (
+                      <div
+                        key={item._id}
+                        className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col justify-between group hover:border-cyan-500/30 transition-all duration-300"
+                      >
+                        <div>
+                          {imgSrc && (
+                            <div className="w-full h-44 rounded-xl overflow-hidden mb-4">
+                              <img
+                                src={imgSrc}
+                                alt={item.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                            </div>
+                          )}
+                          <span className="text-xs text-cyan-400 font-mono block mb-2">
+                            {new Date(item.createdAt).toLocaleDateString()}
+                          </span>
+                          <h4 className="cyber-font text-white font-bold text-base tracking-wide mb-3">
+                            {item.title}
+                          </h4>
+                          <p className="text-gray-300 text-sm leading-relaxed line-clamp-4">
+                            {item.content}
+                          </p>
                         </div>
-                      )}
-                      <span className="text-xs text-cyan-400 font-mono block mb-2">
-                        {new Date(item.createdAt).toLocaleDateString()}
-                      </span>
-                      <h4 className="cyber-font text-white font-bold text-base tracking-wide mb-3">
-                        {item.title}
-                      </h4>
-                      <p className="text-gray-300 text-sm leading-relaxed line-clamp-4">
-                        {item.content}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </motion.section>
 
           {/* 4. EVENTS SECTION */}
@@ -599,98 +623,137 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
                 </h2>
               </div>
 
-              {events.length === 0 ? (
-                <div className="glass-panel p-12 rounded-2xl border border-white/5 text-center max-w-md mx-auto">
-                  <p className="text-gray-300 font-mono uppercase tracking-widest text-sm sm:text-base">
-                    Coming Soon • Registration Node Offline
-                  </p>
-                  <p className="text-sm text-gray-400 mt-2">
-                    Our technical symposium schedules are currently forming. Registration doors open shortly!
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {events.map((evt) => (
-                    <div
-                      key={evt._id}
-                      className="glass-panel p-8 rounded-2xl border border-white/5 flex flex-col justify-between group hover:border-cyan-500/20 transition-all duration-300 relative overflow-hidden"
-                    >
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-400/5 rounded-full filter blur-xl" />
+              {(() => {
+                const displayEvents = events.length > 0 ? events : FALLBACK_EVENTS;
+                return (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {displayEvents.map((evt) => {
+                      const imgSrc = evt.imageUrl
+                        ? evt.imageUrl.startsWith('/')
+                          ? evt.imageUrl
+                          : `${BACKEND_URL}${evt.imageUrl}`
+                        : null;
+                      return (
+                        <div
+                          key={evt._id}
+                          className="glass-panel p-8 rounded-2xl border border-white/5 flex flex-col justify-between group hover:border-cyan-500/20 transition-all duration-300 relative overflow-hidden"
+                        >
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-400/5 rounded-full filter blur-xl" />
 
-                      <div>
-                        {evt.imageUrl && (
-                          <div className="w-full h-48 rounded-xl overflow-hidden mb-4">
-                            <img
-                              src={`${BACKEND_URL}${evt.imageUrl}`}
-                              alt={evt.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
-                        <h4 className="cyber-font text-white font-bold text-lg tracking-wide mb-3">
-                          {evt.title}
-                        </h4>
-                        <p className="text-gray-300 text-sm leading-relaxed mb-6">
-                          {evt.description}
-                        </p>
+                          <div>
+                            {imgSrc && (
+                              <div className="w-full h-48 rounded-xl overflow-hidden mb-4">
+                                <img
+                                  src={imgSrc}
+                                  alt={evt.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                              </div>
+                            )}
+                            <h4 className="cyber-font text-white font-bold text-lg tracking-wide mb-3">
+                              {evt.title}
+                            </h4>
+                            <p className="text-gray-300 text-sm leading-relaxed mb-6">
+                              {evt.description}
+                            </p>
 
-                        <div className="space-y-2 text-sm font-mono text-gray-400 mb-6">
-                          <div className="flex items-center gap-2">
-                            <FiCalendar className="text-cyan-400" />
-                            {new Date(evt.date).toLocaleDateString()}
+                            <div className="space-y-2 text-sm font-mono text-gray-400 mb-6">
+                              <div className="flex items-center gap-2">
+                                <FiCalendar className="text-cyan-400" />
+                                {new Date(evt.date).toLocaleDateString()}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <FiMapPin className="text-purple-400" />
+                                {evt.location}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <FiMapPin className="text-purple-400" />
-                            {evt.location}
-                          </div>
+
+
                         </div>
-                      </div>
-
-                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/5">
-                        <span className="text-xs text-gray-400 font-mono">
-                          {evt.registrationCount || 0} SEATS RESERVED
-                        </span>
-
-                        {registeredEvents[evt._id] ? (
-                          <button className="px-4 py-2 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-sm font-mono rounded-full flex items-center gap-1.5 cursor-default">
-                            <FiCheck /> Secured
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleRegisterEvent(evt._id)}
-                            className="px-5 py-2 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 hover:border-cyan-400 text-cyan-400 text-sm font-mono rounded-full uppercase tracking-wider transition-all cursor-pointer"
-                          >
-                            Reserve Seat
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                      );
+                    })}
+                  </div>
+                );
+              })()}
             </div>
           </motion.section>
 
           {/* 5. TESTIMONIALS SECTION */}
           <motion.section id="testimonials" style={{ y: yTestimonials }} className="relative z-10 py-24 px-6 max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-cyan-400 font-mono text-sm uppercase tracking-widest block mb-2"></span>
+              <span className="text-cyan-400 font-mono text-sm uppercase tracking-widest block mb-2">Chapter Milestones</span>
               <h2 className="cyber-font text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-wide">
                 TESTIMONIALS
               </h2>
             </div>
 
-            {testimonials.length === 0 ? (
-              <div className="glass-panel p-12 rounded-2xl border border-white/5 text-center max-w-md mx-auto">
-                <p className="text-gray-300 font-mono uppercase tracking-widest text-sm sm:text-base">
-                  Coming Soon • Testimonials Offline
-                </p>
-                <p className="text-sm text-gray-400 mt-2">
-                  Feedback from our industry advisors and team is propagating to the network.
-                </p>
+            {/* Inauguration Highlight Card */}
+            <div className="max-w-5xl mx-auto mb-12">
+              <div
+                className="group relative glass-panel rounded-3xl border border-white/10 overflow-hidden cursor-pointer hover:border-cyan-500/40 transition-all duration-500 hover:shadow-[0_0_60px_rgba(0,240,255,0.15)]"
+                style={{ minHeight: '420px' }}
+              >
+                {/* Top accent bar */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 z-20" />
+
+                {/* Background dim overlay that darkens on hover for contrast */}
+                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/80 transition-all duration-500 z-10" />
+
+                {/* Hover Photo Gallery Strip — slides up from bottom */}
+                <div
+                  className="absolute inset-x-0 bottom-0 z-20 flex gap-2 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-in-out"
+                  style={{ height: '55%' }}
+                >
+                  {[
+                    '/inaugration_image_1.jpeg',
+                    '/inaugration_image_2.jpeg',
+                    '/inaugration_image_3.jpeg',
+                    '/inaugration_image_4.jpeg'
+                  ].map((src, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 rounded-xl overflow-hidden border border-white/20 shadow-lg"
+                      style={{
+                        transitionDelay: `${i * 60}ms`,
+                      }}
+                    >
+                      <img
+                        src={src}
+                        alt={`Inauguration moment ${i + 1}`}
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Static Content Layer */}
+                <div className="relative z-30 p-8 md:p-12 group-hover:pb-[58%] transition-all duration-700">
+                  {/* Header badge */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.4)]">
+                      <span className="text-white text-lg font-black">✦</span>
+                    </div>
+                    <div>
+                      <h3 className="cyber-font text-white font-extrabold text-lg tracking-wider uppercase">Chapter Inauguration</h3>
+                      <p className="text-cyan-400 font-mono text-xs tracking-widest">August 2026 · PVG COET&M, Pune</p>
+                    </div>
+
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-gray-300 text-sm sm:text-base leading-relaxed font-sans max-w-3xl">
+                    The inauguration of the <strong className="text-white font-bold">CSI-PVG Student Chapter</strong> was more than just an event; it was the beginning of a vision, a community, and a journey filled with endless possibilities. It marked the coming together of curious minds, passionate innovators, and aspiring technologists with a shared dream of learning, building, and creating an impact. Being a part of this milestone was a proud and memorable experience, reminding us that every great journey begins with a small step and every meaningful change begins with a group of people who dare to dream. With this inauguration, we laid the foundation for a community where ideas turn into innovation, collaboration leads to growth, and challenges become opportunities. <strong className="text-cyan-300">CSI-PVG is not just a student chapter; it is a promise to innovate, inspire, and grow together.</strong> The beginning has been beautiful, but the journey ahead is what will make this legacy truly unforgettable.
+                  </p>
+
+
+                </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            </div>
+
+            {/* Dynamic backend testimonials if available */}
+            {testimonials.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-8">
                 {testimonials.map((test) => (
                   <div
                     key={test._id}
