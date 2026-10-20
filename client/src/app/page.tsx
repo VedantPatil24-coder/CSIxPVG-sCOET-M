@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { FiArrowRight, FiGithub, FiLinkedin, FiCalendar, FiMapPin, FiCheck, FiCpu, FiUsers, FiZap, FiTarget, FiMail, FiInstagram } from 'react-icons/fi';
+import { FiArrowRight, FiGithub, FiLinkedin, FiCalendar, FiMapPin, FiCheck, FiCpu, FiUsers, FiZap, FiTarget, FiMail, FiInstagram, FiMaximize2, FiX } from 'react-icons/fi';
 import Loader from '@/components/Loader';
 import NetworkGlobe from '@/components/NetworkGlobe';
 
@@ -215,6 +215,30 @@ export default function Home() {
   // Registration feedback status map: { eventId: boolean }
   const [registeredEvents, setRegisteredEvents] = useState<{ [key: string]: boolean }>({});
 
+  // Lightbox Image Popup Modal State
+  const [activeModalImage, setActiveModalImage] = useState<{ src: string; title?: string } | null>(null);
+
+  // Close modal on Escape key and lock background scroll
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveModalImage(null);
+      }
+    };
+
+    if (activeModalImage) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeModalImage]);
+
   const { scrollY } = useScroll();
   const yBgGrid = useTransform(scrollY, [0, 3000], [0, -400]);
   const yGlobe = useTransform(scrollY, [0, 1000], [0, 180]);
@@ -378,7 +402,7 @@ export default function Home() {
           <div className="glow-aura w-[600px] h-[600px] bg-purple-500/10 bottom-[20%] right-[-10%]" />
 
           {/* 1. HERO SECTION */}
-          <section className="relative min-h-screen flex flex-col items-center justify-center z-10 px-6 pt-24 pb-12 overflow-hidden bg-[#030303]">
+          <section className="relative min-h-screen flex flex-col items-center justify-center z-10 px-6 pt-24 md:pt-28 pb-12 overflow-hidden bg-[#030303]">
             <motion.div style={{ y: yGlobe }} className="absolute inset-0 z-0 pointer-events-none">
               <NetworkGlobe />
             </motion.div>
@@ -386,7 +410,7 @@ export default function Home() {
             {/* Top Flyer Badges */}
             <motion.div
               style={{ y: yGlobe, opacity: opacityHero }}
-              className="flex justify-between items-center w-full max-w-5xl mb-8 relative z-20"
+              className="flex justify-between items-center w-full max-w-6xl mt-2 md:mt-3 mb-6 px-4 relative z-20"
             >
               {/* PVG Badge */}
               <div className="w-16 h-16 md:w-24 md:h-24 rounded-full overflow-hidden border border-white/20 flex items-center justify-center bg-white shadow-[0_0_15px_rgba(255,255,255,0.15)]">
@@ -587,11 +611,14 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
                       >
                         <div>
                           {imgSrc && (
-                            <div className="w-full h-44 rounded-xl overflow-hidden mb-4">
+                            <div
+                              onClick={() => setActiveModalImage({ src: imgSrc, title: item.title })}
+                              className="w-full h-44 rounded-xl overflow-hidden mb-4 cursor-pointer group/img"
+                            >
                               <img
                                 src={imgSrc}
                                 alt={item.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500"
                               />
                             </div>
                           )}
@@ -642,11 +669,14 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
 
                           <div>
                             {imgSrc && (
-                              <div className="w-full h-48 rounded-xl overflow-hidden mb-4">
+                              <div
+                                onClick={() => setActiveModalImage({ src: imgSrc, title: evt.title })}
+                                className="w-full h-48 rounded-xl overflow-hidden mb-4 cursor-pointer group/img"
+                              >
                                 <img
                                   src={imgSrc}
                                   alt={evt.title}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                  className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500"
                                 />
                               </div>
                             )}
@@ -690,45 +720,11 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
 
             {/* Inauguration Highlight Card */}
             <div className="max-w-5xl mx-auto mb-12">
-              <div
-                className="group relative glass-panel rounded-3xl border border-white/10 overflow-hidden cursor-pointer hover:border-cyan-500/40 transition-all duration-500 hover:shadow-[0_0_60px_rgba(0,240,255,0.15)]"
-                style={{ minHeight: '420px' }}
-              >
+              <div className="group glass-panel rounded-3xl border border-white/10 hover:border-cyan-500/40 transition-all duration-500 hover:shadow-[0_0_60px_rgba(0,240,255,0.15)] relative overflow-hidden">
                 {/* Top accent bar */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 z-20" />
 
-                {/* Background dim overlay that darkens on hover for contrast */}
-                <div className="absolute inset-0 bg-black/60 group-hover:bg-black/80 transition-all duration-500 z-10" />
-
-                {/* Hover Photo Gallery Strip — slides up from bottom */}
-                <div
-                  className="absolute inset-x-0 bottom-0 z-20 flex gap-2 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-in-out"
-                  style={{ height: '55%' }}
-                >
-                  {[
-                    '/inaugration_image_1.jpeg',
-                    '/inaugration_image_2.jpeg',
-                    '/inaugration_image_3.jpeg',
-                    '/inaugration_image_4.jpeg'
-                  ].map((src, i) => (
-                    <div
-                      key={i}
-                      className="flex-1 rounded-xl overflow-hidden border border-white/20 shadow-lg"
-                      style={{
-                        transitionDelay: `${i * 60}ms`,
-                      }}
-                    >
-                      <img
-                        src={src}
-                        alt={`Inauguration moment ${i + 1}`}
-                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Static Content Layer */}
-                <div className="relative z-30 p-8 md:p-12 group-hover:pb-[58%] transition-all duration-700">
+                <div className="relative z-10 p-6 md:p-10">
                   {/* Header badge */}
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.4)]">
@@ -738,7 +734,6 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
                       <h3 className="cyber-font text-white font-extrabold text-lg tracking-wider uppercase">Chapter Inauguration</h3>
                       <p className="text-cyan-400 font-mono text-xs tracking-widest">August 2026 · PVG COET&M, Pune</p>
                     </div>
-
                   </div>
 
                   {/* Description */}
@@ -746,7 +741,36 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
                     The inauguration of the <strong className="text-white font-bold">CSI-PVG Student Chapter</strong> was more than just an event; it was the beginning of a vision, a community, and a journey filled with endless possibilities. It marked the coming together of curious minds, passionate innovators, and aspiring technologists with a shared dream of learning, building, and creating an impact. Being a part of this milestone was a proud and memorable experience, reminding us that every great journey begins with a small step and every meaningful change begins with a group of people who dare to dream. With this inauguration, we laid the foundation for a community where ideas turn into innovation, collaboration leads to growth, and challenges become opportunities. <strong className="text-cyan-300">CSI-PVG is not just a student chapter; it is a promise to innovate, inspire, and grow together.</strong> The beginning has been beautiful, but the journey ahead is what will make this legacy truly unforgettable.
                   </p>
 
-
+                  {/* Slide-down Gallery Container on Hover */}
+                  <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-700 ease-in-out">
+                    <div className="overflow-hidden">
+                      <div className="pt-8 mt-6 border-t border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                          {[
+                            '/inaugration_image_1.jpeg',
+                            '/inaugration_image_2.jpeg',
+                            '/inaugration_image_3.jpeg',
+                            '/inaugration_image_4.jpeg'
+                          ].map((src, i) => (
+                            <div
+                              key={i}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveModalImage({ src, title: `Chapter Inauguration — Moment ${i + 1}` });
+                              }}
+                              className="h-32 sm:h-40 rounded-xl overflow-hidden border border-white/20 hover:border-cyan-400 shadow-lg cursor-pointer transition-all duration-300 group/photo relative bg-black/40"
+                            >
+                              <img
+                                src={src}
+                                alt={`Inauguration moment ${i + 1}`}
+                                className="w-full h-full object-cover group-hover/photo:scale-110 transition-transform duration-500"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -763,7 +787,11 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
                       &ldquo;{test.message}&rdquo;
                     </p>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden border border-cyan-500/30 bg-black/40">
+                      <div
+                        onClick={() => setActiveModalImage({ src: test.avatarUrl || '/placeholder.png', title: `${test.name} — ${test.role}` })}
+                        className="w-10 h-10 rounded-full overflow-hidden border border-cyan-500/30 bg-black/40 cursor-pointer hover:border-cyan-400 transition-colors"
+                        title="Click to view full photo"
+                      >
                         <img
                           src={test.avatarUrl || '/placeholder.png'}
                           alt={test.name}
@@ -947,6 +975,61 @@ Hunt the bugs, patch the chaos, and ship it clean before time runs out. Only the
               </p>
             </div>
           </footer>
+
+          {/* Lightbox Image Popup Modal */}
+          <AnimatePresence>
+            {activeModalImage && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setActiveModalImage(null)}
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/85 backdrop-blur-md cursor-zoom-out"
+              >
+                {/* Modal Container */}
+                <motion.div
+                  initial={{ scale: 0.85, opacity: 0, y: 15 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.85, opacity: 0, y: 15 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 320 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative max-w-4xl max-h-[90vh] flex flex-col items-center bg-[#0a0d14]/95 border-2 border-cyan-500/50 rounded-2xl shadow-[0_0_60px_rgba(0,240,255,0.35)] overflow-hidden cursor-default"
+                >
+                  {/* Top glowing accent bar */}
+                  <div className="w-full h-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 shrink-0" />
+
+                  {/* Close button */}
+                  <button
+                    onClick={() => setActiveModalImage(null)}
+                    className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/70 border border-white/20 hover:border-cyan-400 hover:text-cyan-400 text-white flex items-center justify-center transition-all duration-200 shadow-lg cursor-pointer"
+                    aria-label="Close image popup"
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
+
+                  {/* Image container */}
+                  <div className="p-3 sm:p-5 max-h-[76vh] flex items-center justify-center overflow-hidden">
+                    <img
+                      src={activeModalImage.src}
+                      alt={activeModalImage.title || 'Expanded view'}
+                      className="max-h-[70vh] max-w-full w-auto h-auto object-contain rounded-xl shadow-2xl border border-white/10"
+                    />
+                  </div>
+
+                  {/* Caption / Footer bar */}
+                  <div className="w-full px-5 py-3 bg-black/70 border-t border-white/10 flex items-center justify-between gap-4 shrink-0">
+                    <span className="cyber-font text-white text-xs sm:text-sm font-semibold tracking-wide truncate">
+                      {activeModalImage.title || 'Image Preview'}
+                    </span>
+                    <span className="text-[10px] text-gray-400 font-mono tracking-wider shrink-0 hidden sm:inline">
+                      Press ESC or click outside to close
+                    </span>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
       )}
     </>

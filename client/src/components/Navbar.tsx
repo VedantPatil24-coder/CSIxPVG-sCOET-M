@@ -63,12 +63,12 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="fixed top-6 left-0 w-full z-50 px-4 md:px-8">
+    <header className="fixed top-5 left-0 w-full z-50 px-4 md:px-8">
       <motion.div
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className={`max-w-7xl mx-auto flex items-center justify-between px-6 py-3 rounded-full border border-white/10 transition-all duration-300 ${
+        className={`max-w-5xl mx-auto flex items-center justify-between px-5 py-2.5 rounded-full border border-white/10 transition-all duration-300 ${
           scrolled 
             ? 'bg-black/60 backdrop-blur-md shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] border-cyan-500/20' 
             : 'bg-black/20 backdrop-blur-sm'
@@ -77,8 +77,8 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 md:gap-3">
           <div className="relative">
-            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-400/40 flex items-center justify-center bg-black/50 shadow-[0_0_15px_rgba(0,240,255,0.2)] hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] transition-all duration-300">
-              <img src="/csi_logo.png" alt="CSI Logo" className="w-[85%] h-[85%] object-contain" />
+            <div className="w-10 h-10 md:w-11 md:h-11 rounded-full overflow-hidden border-2 border-cyan-400/60 flex items-center justify-center bg-white shadow-[0_0_15px_rgba(0,240,255,0.3)] hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(0,240,255,0.5)] transition-all duration-300">
+              <img src="/csi_logo.png" alt="CSI Logo" className="w-[82%] h-[82%] object-contain rounded-full" />
             </div>
           </div>
           <div className="flex flex-col">
